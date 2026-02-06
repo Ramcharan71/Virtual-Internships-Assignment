@@ -10,6 +10,7 @@ const ProductTable = () => {
   const [editValue, setEditValue] = useState('');
   
   const observerTarget = useRef(null);
+  const inputRef = useRef(null);
   const limit = 10;
 
   const fetchProducts = useCallback(async (skipValue) => {
@@ -58,6 +59,13 @@ const ProductTable = () => {
     };
   }, [skip, hasMore, loading, fetchProducts]);
 
+  useEffect(() => {
+    if (editingId && inputRef.current) {
+      inputRef.current.focus({ preventScroll: true });
+      inputRef.current.select();
+    }
+  }, [editingId]);
+
   const handleEdit = (id, title) => {
     setEditingId(id);
     setEditValue(title);
@@ -104,11 +112,11 @@ const ProductTable = () => {
                 {editingId === product.id ? (
                   <div className="edit-container">
                     <input
+                      ref={inputRef}
                       type="text"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
                       onKeyDown={(e) => handleKeyPress(e, product.id)}
-                      autoFocus
                     />
                     <button onClick={() => handleSave(product.id)}>Save</button>
                     <button onClick={handleCancel}>Cancel</button>
